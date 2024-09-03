@@ -1,0 +1,81 @@
+ // if let Some(_) = intersect_cube(&ray, &cube) {
+            //     framebuffer[cursor] = cube.color; // Assigne la couleur de la sphère au pixel
+            // }
+            // if let Some(_) = intersect_sphere(&ray, &sphere) {
+            //     framebuffer[cursor] = sphere.color; // Assigne la couleur de la sphère au pixel
+            // }
+            // if let Some(_) = intersect_sphere(&ray, &sphere2) {
+            //     framebuffer[cursor] = sphere2.color; // Assigne la couleur de la sphère au pixel
+            // }
+
+
+
+
+            // cursor = 0;
+    // for _ in 0..HEIGHT {
+    //     for _ in 0..WIDTH {
+    //         print!("{:?} ", framebuffer[cursor]); // Affiche la couleur de chaque pixel
+    //         cursor+=1
+    //     }
+    //     print!("\n"); // Nouvelle ligne pour chaque ligne de pixels
+    // }
+
+
+    fn get_color(ray: &Ray, objects: &[&dyn Intersectable]) -> Vecto {
+        let mut closest_distance = f64::INFINITY;
+        let mut final_color = Vecto::new(0., 0., 0.);  // default black color
+    
+        for object in objects {
+            if let Some(t) = object.intersect(ray) {
+                if t < closest_distance {
+                    closest_distance = t;
+                    final_color = object.color();
+                }
+            }
+        }
+    
+        final_color
+    }
+
+
+
+    pub fn rotate(&mut self, angles: Vecto) {
+        // Assuming the angles are given in radians
+    
+        // Rotation around x-axis
+        let cos_theta = angles.x.cos();
+        let sin_theta = angles.x.sin();
+        let rotation_x = [
+            [1.0, 0.0, 0.0],
+            [0.0, cos_theta, -sin_theta],
+            [0.0, sin_theta, cos_theta],
+        ];
+    
+        // Rotation around y-axis
+        cos_theta = angles.y.cos();
+        sin_theta = angles.y.sin();
+        let rotation_y = [
+            [cos_theta, 0.0, sin_theta],
+            [0.0, 1.0, 0.0],
+            [-sin_theta, 0.0, cos_theta],
+        ];
+    
+        // Rotation around z-axis
+        cos_theta = angles.z.cos();
+        sin_theta = angles.z.sin();
+        let rotation_z = [
+            [cos_theta, -sin_theta, 0.0],
+            [sin_theta, cos_theta, 0.0],
+            [0.0, 0.0, 1.0],
+        ];
+    
+        // Applying the rotation matrices
+        self.look_at = self.look_at.multiply_matrix(&rotation_x);
+        self.look_at = self.look_at.multiply_matrix(&rotation_y);
+        self.look_at = self.look_at.multiply_matrix(&rotation_z);
+    
+        self.up = self.up.multiply_matrix(&rotation_x);
+        self.up = self.up.multiply_matrix(&rotation_y);
+        self.up = self.up.multiply_matrix(&rotation_z);
+    }
+    
